@@ -1,0 +1,17 @@
+{
+  "name": "unteamed",
+  "version": "0.0.1",
+  "description": "Tools for accessing Office 365 SharePoint drives without third-party sign-in",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright": "^1.59.1",
+    "slugify": "^1.6.9"
+  }
+}

@@ -8,7 +8,7 @@ const page = await ctx.newPage();
 console.log("UA: " + await page.evaluate(() => navigator.userAgent));
 
 await page.goto(`https://${config.tenant}-my.sharepoint.com/`);
-rl.question("Please login to your account now. Once you are at the OneDrive homepage, press Enter in this terminal.");
+await rl.question("Please login to your account now. Once you are at the OneDrive homepage, press Enter in this terminal.");
 rl.close();
 await ctx.storageState({path: "./data/auth.json"});
 await ctx.close();

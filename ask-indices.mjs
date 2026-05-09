@@ -3,23 +3,29 @@ import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import * as readline from "node:readline/promises";
 import slugify from "slugify";
+import enquirer from 'enquirer';
 
-let whiptailOptions = drives.map(x => `${x.title} | ${x.team}`).map((x,i) => [i.toString(),x,"0"]).flat();
-let whiptailArgs = [
-  "--output-fd", "2",
-  "--checklist", "Choose drives to add to desired.json",
-  process.stdout.rows-15,
-  process.stdout.columns-10,
-  process.stdout.rows-25,
-  ...whiptailOptions
-];
-let { stderr, status } = spawnSync("whiptail", whiptailArgs, {stdio:["inherit", "inherit", "pipe"]});
-if (status != 0) process.exit(status);
+async function selectDrives(drives) {
+  const prompt = new enquirer.MultiSelect({
+    name: 'value',
+    message: 'choose drives to add to desired.json',
+    choices: drives.map((x, i) => ({
+      name: i.toString(),
+      message: `${x.title} | ${x.team}`
+    }))
+  });
+
+  try {
+    const selected = await prompt.run();
+    if (!selected.length) process.exit(1);
+    return selected; // returns array of strings, e.g., ["0", "2"]
+  } catch (err) {
+    process.exit(1); // handles ctrl+c
+  }
+}
 
 // We use numeric tags, so it is safe to remove quotes
-let whiptail_output = stderr.toString("utf8").replaceAll("\"","");
-if (whiptail_output == "") process.exit(1);
-let choices = whiptail_output.split(" ").map(x => Number(x)).map(x => drives[x]);
+let choices = (await selectDrives(drives)).map(x => Number(x)).map(x => drives[x]);
 console.log("You will now be asked to set a remote name for each chosen drive.");
 console.log("The default name will be denoted by square backets. To use it, press ENTER.");
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });

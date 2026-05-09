@@ -3,7 +3,8 @@ import desired from "./data/desired.json" with {type:"json"};
 import {chromium} from "playwright";
 import {expect} from "@playwright/test";
 import {writeFileSync} from "node:fs";
-const browser = await chromium.launch({headless:false});
+const headless = process.env.RUN_HEADLESS === "true";
+const browser = await chromium.launch({ headless });
 const ctx = await browser.newContext({reducedMotion:"reduce",storageState:"data/auth.json"});
 const page = await ctx.newPage();
 
